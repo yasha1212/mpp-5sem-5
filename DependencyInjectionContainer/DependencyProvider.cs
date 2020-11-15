@@ -47,6 +47,11 @@ namespace DependencyInjectionContainer
                 return CreateInstance(implementationInfo.ImplementationType);
             }
 
+            if (implementationInfo.Lifetime == Lifetime.Singleton)
+            {
+                return Singleton.GetInstance(implementationInfo.ImplementationType, CreateInstance);
+            }
+
             return null;
         }
 
