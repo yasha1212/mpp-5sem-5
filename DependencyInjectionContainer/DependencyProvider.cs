@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -16,14 +17,14 @@ namespace DependencyInjectionContainer
             dependencies = configuration.Dependencies;
         }
 
-        public T Resolve<T>() where T: class
+        public T Resolve<T>(ImplementationName implementationName = ImplementationName.None) where T: class
         {
             Type dependencyType = typeof(T);
 
-            return (T)Resolve(dependencyType);
+            return (T)Resolve(dependencyType, implementationName);
         }
 
-        private object Resolve(Type dependencyType)
+        private object Resolve(Type dependencyType, ImplementationName implementationName = ImplementationName.None)
         {
             if (dependencyType.IsGenericType && (dependencyType.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
             {
@@ -46,7 +47,7 @@ namespace DependencyInjectionContainer
                 return null;
             }
 
-            var implementationInfo = dependencies[dependencyType][0];
+            var implementationInfo = GetImplementationInfo(dependencyType, implementationName);
 
             if (!dependencyType.IsAssignableFrom(implementationInfo.ImplementationType))
             {
@@ -64,6 +65,12 @@ namespace DependencyInjectionContainer
             }
 
             return null;
+        }
+
+        private ImplementationInfo GetImplementationInfo(Type dependencyType, ImplementationName name)
+        {
+            var implementations = dependencies[dependencyType];
+            return implementations.Where(info => info.Name == name).First();
         }
 
         private IEnumerable GetAllImplementations(Type dependencyType)
@@ -87,7 +94,16 @@ namespace DependencyInjectionContainer
 
             foreach (var parameter in constructor.GetParameters())
             {
-                parameters.Add(Resolve(parameter.ParameterType));
+                var attribute = (DependencyKeyAttribute)parameter.GetCustomAttribute(typeof(DependencyKeyAttribute));
+
+                if (attribute == null)
+                {
+                    parameters.Add(Resolve(parameter.ParameterType));
+                }
+                else
+                {
+                    parameters.Add(Resolve(parameter.ParameterType, attribute.ImplementationName));
+                }
             }
 
             return Activator.CreateInstance(type, parameters.ToArray());

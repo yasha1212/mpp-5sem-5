@@ -3,6 +3,16 @@ using System.Collections.Generic;
 
 namespace DependencyInjectionContainer
 {
+    public enum ImplementationName
+    {
+        None,
+        First,
+        Second,
+        Third,
+        Fourth,
+        Fifth
+    }
+
     public class DependenciesConfiguration
     {
         public Dictionary<Type, List<ImplementationInfo>> Dependencies { get; }
@@ -12,9 +22,10 @@ namespace DependencyInjectionContainer
             Dependencies = new Dictionary<Type, List<ImplementationInfo>>();
         }
 
-        public void Register<TDependency, TImplementation>(Lifetime lifetime = Lifetime.Transient) where TDependency: class where TImplementation: TDependency
+        public void Register<TDependency, TImplementation>(Lifetime lifetime = Lifetime.Transient, ImplementationName name = ImplementationName.None) 
+            where TDependency: class where TImplementation: TDependency
         {
-            var implementationInfo = new ImplementationInfo(typeof(TImplementation), lifetime);
+            var implementationInfo = new ImplementationInfo(typeof(TImplementation), lifetime, name);
 
             if (Dependencies.ContainsKey(typeof(TDependency)))
             {
@@ -29,7 +40,7 @@ namespace DependencyInjectionContainer
 
         public void Register(Type dependencyType, Type implementationType)
         {
-            var implementationInfo = new ImplementationInfo(implementationType, Lifetime.Transient);
+            var implementationInfo = new ImplementationInfo(implementationType, Lifetime.Transient, ImplementationName.None);
 
             if (Dependencies.ContainsKey(dependencyType))
             {
