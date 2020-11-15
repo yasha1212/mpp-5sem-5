@@ -26,5 +26,20 @@ namespace DependencyInjectionContainer
                 Dependencies[typeof(TDependency)].Add(implementationInfo);
             }
         }
+
+        public void Register(Type dependencyType, Type implementationType)
+        {
+            var implementationInfo = new ImplementationInfo(implementationType, Lifetime.Transient);
+
+            if (Dependencies.ContainsKey(dependencyType))
+            {
+                Dependencies[dependencyType].Add(implementationInfo);
+            }
+            else
+            {
+                Dependencies.Add(dependencyType, new List<ImplementationInfo>());
+                Dependencies[dependencyType].Add(implementationInfo);
+            }
+        }
     }
 }

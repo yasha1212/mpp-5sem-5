@@ -30,6 +30,17 @@ namespace DependencyInjectionContainer
                 return GetAllImplementations(dependencyType.GetGenericArguments()[0]);
             }
 
+            if (dependencyType.IsGenericType && dependencies.ContainsKey(dependencyType.GetGenericTypeDefinition()))
+            {
+                var implementationType = dependencies[dependencyType.GetGenericTypeDefinition()][0].ImplementationType;
+                implementationType = implementationType.MakeGenericType(dependencyType.GetGenericArguments());
+
+                if (dependencyType.IsAssignableFrom(implementationType))
+                {
+                    return CreateInstance(implementationType);
+                }
+            }
+
             if (!dependencies.ContainsKey(dependencyType))
             {
                 return null;
