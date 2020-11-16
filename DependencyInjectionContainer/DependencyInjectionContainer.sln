@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjectionContainer", "DependencyInjectionContainer.csproj", "{072C701B-6AF9-44DC-8362-2609DBF84A8D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjectionContainer.Tests", "..\DependencyInjectionContainer.Tests\DependencyInjectionContainer.Tests.csproj", "{513A4C10-2719-4784-881B-F1050317D994}"
+	ProjectSection(ProjectDependencies) = postProject
+		{072C701B-6AF9-44DC-8362-2609DBF84A8D} = {072C701B-6AF9-44DC-8362-2609DBF84A8D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
